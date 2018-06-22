@@ -13,7 +13,7 @@ const AuthPlugin = {
     // reactive interface
     let authInterface = new Vue({
       data: {
-        idToken: null,
+        token: null,
         decodedToken: null,
         currentAuthStyle: null
       }
@@ -33,7 +33,7 @@ const AuthPlugin = {
       get styles () { return Vue.Authentication.styles },
       get currentAuthDriver () { return Vue.Authentication.currentAuthDriver },
       get currentAuthStyle () { return authInterface.$data.currentAuthStyle },
-      get idToken () { return authInterface.$data.idToken },
+      get token () { return authInterface.$data.token },
       get decodedToken () { return authInterface.$data.decodedToken }
     }
   }

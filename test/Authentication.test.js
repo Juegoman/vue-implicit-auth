@@ -47,7 +47,7 @@ describe('Authentication.js', () => {
       expect(auth.styles).toEqual(['TEST', 'test2', 'testStyle'])
     })
     it('idToken returns null when currentAuthStyle is not set', () => {
-      expect(auth.idToken).toBeNull()
+      expect(auth.token).toBeNull()
     })
     it('decodedToken returns null when currentAuthStyle is not set', () => {
       expect(auth.decodedToken).toBeNull()

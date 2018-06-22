@@ -1,6 +1,5 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import AuthPlugin from '../src/AuthPlugin'
-import Authentication from '../src/Authentication'
 import LSKEYS from '../src/LSKEYS'
 import { LocalStorageMock, testDriver } from './testutil'
 
@@ -47,14 +46,14 @@ describe('AuthPlugin.js', () => {
       expect(wrapper.vm.$http).not.toBeNull()
     })
     it('configureHttp() configures Authentication header for $http instance', () => {
-      expect(wrapper.vm.$http.defaults.headers.Authorization).toBe('Bearer ' + testDriver.idToken)
+      expect(wrapper.vm.$http.defaults.headers.Authorization).toBe('Bearer ' + testDriver.token)
     })
     it('calls logout on correct AuthDriver', () => {
       wrapper.vm.$auth.logout()
       expect(testDriver.logout).toHaveBeenCalled()
     })
     it('returns idToken from AuthDriver', () => {
-      expect(wrapper.vm.$auth.idToken).toBe(testDriver.idToken)
+      expect(wrapper.vm.$auth.token).toBe(testDriver.token)
     })
     it('returns decodedToken from AuthDriver', () => {
       expect(wrapper.vm.$auth.decodedToken).toBe(testDriver.decodedToken)
@@ -98,7 +97,7 @@ describe('AuthPlugin.js', () => {
       expect(wrapper.vm.$auth.currentAuthDriver).toBeNull()
     })
     it('$auth.idToken returns null if no authStyle is set', () => {
-      expect(wrapper.vm.$auth.idToken).toBeNull()
+      expect(wrapper.vm.$auth.token).toBeNull()
     })
     it('$auth.decodedToken returns null if no authStyle is set', () => {
       expect(wrapper.vm.$auth.decodedToken).toBeNull()

@@ -11,7 +11,7 @@ import LSKEYS from './LSKEYS'
  * @constructor
  */
 function AADDriver (opts) {
-  this.id_token = null
+  this.token = null
   this.authContext = null
   // required options
   if (!opts.TENANT) {
@@ -27,27 +27,27 @@ function AADDriver (opts) {
   }
   this.REDIRECT_URI = opts.REDIRECT_URI
   Object.defineProperties(this, {
-    idToken: {
-      get: () => this.id_token,
-      set: token => {
+    token: {
+      get: () => this.token,
+      set: newToken => {
         // nonce check
-        let decoded = decode(token.split('.')[1])
+        let decoded = decode(newToken.split('.')[1])
         if (decoded.nonce !== this.nonce) {
           throw new Error('Token nonce does not match stored nonce')
         }
         // logged in
-        window.localStorage.setItem(LSKEYS.ID_TOKEN, token)
-        this.id_token = token
+        window.localStorage.setItem(LSKEYS.TOKEN, newToken)
+        this.token = newToken
         // if reactiveChange is defined in authContext then update the reactive interface
         if (this.authContext.reactiveChange) {
-          this.authContext.reactiveChange('idToken', token)
+          this.authContext.reactiveChange('token', newToken)
           this.authContext.reactiveChange('decodedToken', this.decodedToken)
         }
       }
     },
     decodedToken: {
       get: () => {
-        let splitToken = this.idToken.split('.')
+        let splitToken = this.token.split('.')
         return {
           header: decode(splitToken[0]),
           payload: decode(splitToken[1])
@@ -79,23 +79,18 @@ AADDriver.prototype.init = function (authContext) {
     }
     // hash contains the id_token
     if (returned.id_token) {
-      this.idToken = returned.id_token
+      this.token = returned.id_token
     }
   } else {
     // not coming from redirect, so check if id token is stored in localStorage
-    let idToken = window.localStorage.getItem(LSKEYS.ID_TOKEN)
-    if (idToken) {
+    let token = window.localStorage.getItem(LSKEYS.TOKEN)
+    if (token) {
       // id token was stored, so we are logged in
-      this.idToken = idToken
+      this.token = token
     }
   }
   authContext.configureHttp()
 }
-/**
- * Checks the nonce on an id_token with the saved nonce,
- * then saves id_token on success
- * @param token
- */
 
 AADDriver.prototype.login = function (silent) {
   // redirect to login
@@ -105,7 +100,7 @@ AADDriver.prototype.login = function (silent) {
  * Clear localStorage and redirect to microsoft logout endpoint
  */
 AADDriver.prototype.logout = function () {
-  window.localStorage.removeItem(LSKEYS.ID_TOKEN)
+  window.localStorage.removeItem(LSKEYS.TOKEN)
   window.localStorage.removeItem(LSKEYS.NONCE)
   window.localStorage.removeItem(LSKEYS.AUTH_STYLE)
   window.location.replace(`https://login.microsoftonline.com/${this.TENANT}/oauth2/logout?post_logout_redirect_uri=${this.REDIRECT_URI}`)
@@ -153,7 +148,7 @@ AADDriver.prototype.backgroundLogin = async function () {
     this.login()
   }
   if (response.id_token) {
-    this.idToken = response.id_token
+    this.token = response.id_token
   }
   // remove iframe
   attachedFrame.remove()

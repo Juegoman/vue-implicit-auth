@@ -3,7 +3,7 @@ import axios from 'axios'
 import LSKEYS from './LSKEYS'
 /**
  * AuthDriver interface
- * idToken (getter/setter)
+ * token (getter/setter)
  * decodedToken (getter)
  * init(Authentication) handle returning from redirect
  * login()
@@ -57,10 +57,10 @@ function Authentication (params) {
       }
     },
     // returns the currently active id token or null
-    idToken: {
+    token: {
       get: () => {
         if (this.currentAuthDriver) {
-          return this.currentAuthDriver.idToken
+          return this.currentAuthDriver.token
         }
         return null
       }
@@ -90,7 +90,7 @@ Authentication.prototype.configureHttp = function () {
   let httpInstance = axios.create({
     baseURL: this.baseURL,
     headers: {
-      Authorization: 'Bearer ' + this.idToken
+      Authorization: 'Bearer ' + this.token
     }
   })
   httpInstance.interceptors.response.use(response => response, async (error) => {

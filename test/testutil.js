@@ -9,13 +9,13 @@ export const testDriver = {
   login: jest.fn(),
   logout: jest.fn(),
   backgroundLogin: jest.fn(cb => cb()),
-  idToken: 'testtoken',
+  token: 'testtoken',
   decodedToken: {
     decoded: true
   },
   init: jest.fn(auth => {
     if (auth.reactiveChange) {
-      auth.reactiveChange('idToken', testDriver.idToken)
+      auth.reactiveChange('token', testDriver.token)
       auth.reactiveChange('decodedToken', testDriver.decodedToken)
     }
     auth.configureHttp()
